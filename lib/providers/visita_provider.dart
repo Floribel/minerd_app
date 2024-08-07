@@ -1,29 +1,47 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../models/visita_model.dart';
-import '../services/db_helper.dart';
 
 class VisitaProvider with ChangeNotifier {
   List<Visita> _visitas = [];
-  final DBHelper _dbHelper = DBHelper();
 
   List<Visita> get visitas => _visitas;
 
-  // Método para obtener visitas desde la base de datos
-  Future<void> fetchVisitas() async {
-    _visitas = await _dbHelper.getVisitas();
-    notifyListeners();
+  Future<void> loadVisitas() async {
+    final url = Uri.parse('https://adamix.net/minerd/def/mis_visitas.php');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      _visitas = data.map((item) => Visita.fromMap(item)).toList();
+      notifyListeners();
+    } else {
+      throw Exception('Error al cargar las visitas');
+    }
   }
 
-  // Método para agregar una nueva visita
-  Future<void> addVisita(Visita visita) async {
-    await _dbHelper.insertVisita(visita);
-    await fetchVisitas(); // Actualizar la lista después de agregar
+  Future<void> insertarVisita(Visita visita) async {
+    final url = Uri.parse('https://adamix.net/minerd/def/registrar_visita.php');
+    final response = await http.post(url, body: visita.toMap());
+
+    if (response.statusCode == 200) {
+      _visitas.add(visita);
+      notifyListeners();
+    } else {
+      throw Exception('Error al registrar la visita');
+    }
   }
 
-  // Método para eliminar todas las visitas
   Future<void> deleteAllVisitas() async {
-    await _dbHelper.deleteAllVisitas();
-    _visitas = [];
-    notifyListeners();
+    final url = Uri.parse('https://adamix.net/minerd/def/borrar_visitas.php');
+    final response = await http.post(url);
+
+    if (response.statusCode == 200) {
+      _visitas.clear();
+      notifyListeners();
+    } else {
+      throw Exception('Error al borrar las visitas');
+    }
   }
 }

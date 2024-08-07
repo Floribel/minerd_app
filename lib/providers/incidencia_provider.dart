@@ -1,29 +1,48 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../models/incidencia_model.dart';
-import '../services/db_helper.dart';
 
 class IncidenciaProvider with ChangeNotifier {
   List<Incidencia> _incidencias = [];
-  final DBHelper _dbHelper = DBHelper();
 
   List<Incidencia> get incidencias => _incidencias;
 
-  // Método para obtener incidencias desde la base de datos
-  Future<void> fetchIncidencias() async {
-    _incidencias = await _dbHelper.getIncidencias();
-    notifyListeners();
+  Future<void> loadIncidencias() async {
+    final url = Uri.parse('https://adamix.net/minerd/def/situaciones.php');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      _incidencias = data.map((item) => Incidencia.fromMap(item)).toList();
+      notifyListeners();
+    } else {
+      throw Exception('Error al cargar las incidencias');
+    }
   }
 
-  // Método para agregar una nueva incidencia
-  Future<void> addIncidencia(Incidencia incidencia) async {
-    await _dbHelper.insertIncidencia(incidencia);
-    await fetchIncidencias(); // Actualizar la lista después de agregar
+  Future<void> insertarIncidencia(Incidencia incidencia) async {
+    final url = Uri.parse('https://adamix.net/minerd/def/registrar_visita.php');
+    final response = await http.post(url, body: incidencia.toMap());
+
+    if (response.statusCode == 200) {
+      _incidencias.add(incidencia);
+      notifyListeners();
+    } else {
+      throw Exception('Error al registrar la incidencia');
+    }
   }
 
-  // Método para eliminar todas las incidencias
   Future<void> deleteAllIncidencias() async {
-    await _dbHelper.deleteAllIncidencias();
-    _incidencias = [];
-    notifyListeners();
+    final url =
+        Uri.parse('https://adamix.net/minerd/def/borrar_incidencias.php');
+    final response = await http.post(url);
+
+    if (response.statusCode == 200) {
+      _incidencias.clear();
+      notifyListeners();
+    } else {
+      throw Exception('Error al borrar las incidencias');
+    }
   }
 }

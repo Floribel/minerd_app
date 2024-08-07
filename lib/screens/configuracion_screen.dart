@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/incidencia_provider.dart';
 import '../providers/visita_provider.dart';
-import '../widgets/custom_drawer.dart';
 
-class HomeScreen extends StatelessWidget {
+class ConfiguracionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final incidenciaProvider = Provider.of<IncidenciaProvider>(context);
@@ -12,47 +11,13 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('MINERD App'),
+        title: Text('Configuración'),
       ),
-      drawer: CustomDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Bienvenido a la App de MINERD',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/registro-incidencia');
-              },
-              icon: Icon(Icons.add),
-              label: Text('Registrar Incidencia'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/registro-visita');
-              },
-              icon: Icon(Icons.add),
-              label: Text('Registrar Visita'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/lista-visitas');
-              },
-              icon: Icon(Icons.list),
-              label: Text('Ver Visitas Registradas'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/lista-incidencias');
-              },
-              icon: Icon(Icons.list),
-              label: Text('Ver Incidencias Registradas'),
-            ),
             ElevatedButton.icon(
               onPressed: () {
                 _showDeleteConfirmationDialog(
@@ -61,6 +26,7 @@ class HomeScreen extends StatelessWidget {
               icon: Icon(Icons.delete),
               label: Text('Borrar Todos los Datos'),
             ),
+            // Aquí puedes agregar más opciones de configuración según sea necesario
           ],
         ),
       ),

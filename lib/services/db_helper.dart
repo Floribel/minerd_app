@@ -4,14 +4,7 @@ import '../models/incidencia_model.dart';
 import '../models/visita_model.dart';
 
 class DBHelper {
-  static final DBHelper _instance = DBHelper._internal();
   static Database? _database;
-
-  factory DBHelper() {
-    return _instance;
-  }
-
-  DBHelper._internal();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -20,47 +13,31 @@ class DBHelper {
   }
 
   Future<Database> _initDB() async {
-    String path = join(await getDatabasesPath(), 'minerd_app.db');
+    String path = join(await getDatabasesPath(), 'minerd.db');
     return await openDatabase(
       path,
-      onCreate: _onCreate,
       version: 1,
+      onCreate: (db, version) {
+        db.execute(
+          'CREATE TABLE incidencias(id INTEGER PRIMARY KEY, titulo TEXT, centroEducativo TEXT, regional TEXT, distrito TEXT, fecha TEXT, descripcion TEXT, fotoPath TEXT, audioPath TEXT)',
+        );
+        db.execute(
+          'CREATE TABLE visitas(id INTEGER PRIMARY KEY, cedulaDirector TEXT, codigoCentro TEXT, motivo TEXT, fotoEvidenciaPath TEXT, comentario TEXT, notaVozPath TEXT, latitud REAL, longitud REAL, fecha TEXT, hora TEXT)',
+        );
+      },
     );
   }
 
-  void _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE incidencias(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        titulo TEXT,
-        centroEducativo TEXT,
-        regional TEXT,
-        distrito TEXT,
-        fecha TEXT,
-        descripcion TEXT,
-        fotoPath TEXT,
-        audioPath TEXT
-      )
-    ''');
-
-    await db.execute('''
-      CREATE TABLE visitas(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cedulaDirector TEXT,
-        codigoCentro TEXT,
-        motivo TEXT,
-        fotoEvidenciaPath TEXT,
-        comentario TEXT,
-        notaVozPath TEXT,
-        latitud REAL,
-        longitud REAL,
-        fecha TEXT,
-        hora TEXT
-      )
-    ''');
+  Future<void> insertIncidencia(Incidencia incidencia) async {
+    final db = await database;
+    await db.insert('incidencias', incidencia.toMap());
   }
 
-  // Métodos para incidencias
+  Future<void> insertVisita(Visita visita) async {
+    final db = await database;
+    await db.insert('visitas', visita.toMap());
+  }
+
   Future<List<Incidencia>> getIncidencias() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('incidencias');
@@ -69,17 +46,6 @@ class DBHelper {
     });
   }
 
-  Future<int> insertIncidencia(Incidencia incidencia) async {
-    final db = await database;
-    return await db.insert('incidencias', incidencia.toMap());
-  }
-
-  Future<void> deleteAllIncidencias() async {
-    final db = await database;
-    await db.delete('incidencias');
-  }
-
-  // Métodos para visitas
   Future<List<Visita>> getVisitas() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('visitas');
@@ -88,9 +54,9 @@ class DBHelper {
     });
   }
 
-  Future<int> insertVisita(Visita visita) async {
+  Future<void> deleteAllIncidencias() async {
     final db = await database;
-    return await db.insert('visitas', visita.toMap());
+    await db.delete('incidencias');
   }
 
   Future<void> deleteAllVisitas() async {

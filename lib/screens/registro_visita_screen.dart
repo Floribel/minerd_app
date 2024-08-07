@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../models/incidencia_model.dart';
-import '../providers/incidencia_provider.dart';
-import 'dart:io';
+import '../models/visita_model.dart';
+import '../providers/visita_provider.dart';
 
-class RegistroIncidenciaScreen extends StatefulWidget {
+class RegistroVisitaScreen extends StatefulWidget {
+  final Key? key;
+
+  RegistroVisitaScreen({this.key}) : super(key: key);
+
   @override
-  _RegistroIncidenciaScreenState createState() =>
-      _RegistroIncidenciaScreenState();
+  _RegistroVisitaScreenState createState() => _RegistroVisitaScreenState();
 }
 
-class _RegistroIncidenciaScreenState extends State<RegistroIncidenciaScreen> {
+class _RegistroVisitaScreenState extends State<RegistroVisitaScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _titulo = '';
-  String _centroEducativo = '';
-  String _regional = '';
-  String _distrito = '';
-  String _descripcion = '';
-  String? _fotoPath;
-  String? _audioPath;
+  String _cedulaDirector = '';
+  String _codigoCentro = '';
+  String _motivo = '';
+  String _comentario = '';
+  String? _fotoUrl;
   final ImagePicker _picker = ImagePicker();
 
   void _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
+      // Aquí normalmente deberías subir la imagen a un servidor y obtener una URL
+      // Para fines de demostración, estamos simulando una URL
       setState(() {
-        _fotoPath = pickedFile.path;
+        _fotoUrl = 'https://example.com/fake-url/${pickedFile.name}';
       });
     }
   }
@@ -35,22 +37,24 @@ class _RegistroIncidenciaScreenState extends State<RegistroIncidenciaScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      Incidencia nuevaIncidencia = Incidencia(
-        titulo: _titulo,
-        centroEducativo: _centroEducativo,
-        regional: _regional,
-        distrito: _distrito,
+      Visita nuevaVisita = Visita(
+        cedulaDirector: _cedulaDirector,
+        codigoCentro: _codigoCentro,
+        motivo: _motivo,
+        fotoEvidenciaPath: _fotoUrl ?? '',
+        comentario: _comentario,
+        notaVozPath: '',
+        latitud: 0.0,
+        longitud: 0.0,
         fecha: DateTime.now().toIso8601String(),
-        descripcion: _descripcion,
-        fotoPath: _fotoPath ?? '',
-        audioPath: _audioPath ?? '',
+        hora: TimeOfDay.now().format(context),
       );
 
-      Provider.of<IncidenciaProvider>(context, listen: false)
-          .insertarIncidencia(nuevaIncidencia);
+      Provider.of<VisitaProvider>(context, listen: false)
+          .insertarVisita(nuevaVisita);
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Incidencia registrada exitosamente'),
+        content: Text('Visita registrada exitosamente'),
       ));
 
       Navigator.pop(context);
@@ -61,7 +65,7 @@ class _RegistroIncidenciaScreenState extends State<RegistroIncidenciaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registrar Incidencia'),
+        title: Text('Registrar Visita'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -70,68 +74,56 @@ class _RegistroIncidenciaScreenState extends State<RegistroIncidenciaScreen> {
           child: ListView(
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Título'),
+                decoration: InputDecoration(labelText: 'Cédula del Director'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese un título';
+                    return 'Por favor ingrese la cédula del director';
                   }
                   return null;
                 },
                 onSaved: (value) {
-                  _titulo = value!;
+                  _cedulaDirector = value!;
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Centro Educativo'),
+                decoration: InputDecoration(labelText: 'Código del Centro'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el centro educativo';
+                    return 'Por favor ingrese el código del centro';
                   }
                   return null;
                 },
                 onSaved: (value) {
-                  _centroEducativo = value!;
+                  _codigoCentro = value!;
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Regional'),
+                decoration: InputDecoration(labelText: 'Motivo de la Visita'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese la regional';
+                    return 'Por favor ingrese el motivo de la visita';
                   }
                   return null;
                 },
                 onSaved: (value) {
-                  _regional = value!;
+                  _motivo = value!;
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Distrito'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el distrito';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _distrito = value!;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Descripción'),
+                decoration: InputDecoration(labelText: 'Comentario'),
                 maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese una descripción';
+                    return 'Por favor ingrese un comentario';
                   }
                   return null;
                 },
                 onSaved: (value) {
-                  _descripcion = value!;
+                  _comentario = value!;
                 },
               ),
               SizedBox(height: 20),
-              _fotoPath != null ? Image.network(_fotoPath!) : Container(),
+              _fotoUrl != null ? Image.network(_fotoUrl!) : Container(),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _pickImage,
@@ -140,7 +132,7 @@ class _RegistroIncidenciaScreenState extends State<RegistroIncidenciaScreen> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text('Registrar Incidencia'),
+                child: Text('Registrar Visita'),
               ),
             ],
           ),

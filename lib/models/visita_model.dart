@@ -1,30 +1,33 @@
+import 'dart:convert';
+
 class Visita {
-  final int id;
-  final String cedulaDirector;
-  final String codigoCentro;
-  final String motivo;
-  final String fotoEvidenciaPath;
-  final String comentario;
-  final String notaVozPath;
-  final double latitud;
-  final double longitud;
-  final DateTime fecha;
-  final String hora;
+  int? id;
+  String cedulaDirector;
+  String codigoCentro;
+  String motivo;
+  String? fotoEvidenciaPath;
+  String comentario;
+  String? notaVozPath;
+  double latitud;
+  double longitud;
+  String fecha;
+  String hora;
 
   Visita({
-    required this.id,
+    this.id,
     required this.cedulaDirector,
     required this.codigoCentro,
     required this.motivo,
-    required this.fotoEvidenciaPath,
+    this.fotoEvidenciaPath,
     required this.comentario,
-    required this.notaVozPath,
+    this.notaVozPath,
     required this.latitud,
     required this.longitud,
     required this.fecha,
     required this.hora,
   });
 
+  // Convierte el modelo a un Map para la base de datos
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -36,11 +39,12 @@ class Visita {
       'notaVozPath': notaVozPath,
       'latitud': latitud,
       'longitud': longitud,
-      'fecha': fecha.toIso8601String(),
+      'fecha': fecha,
       'hora': hora,
     };
   }
 
+  // Convierte un Map en un objeto Visita
   factory Visita.fromMap(Map<String, dynamic> map) {
     return Visita(
       id: map['id'],
@@ -52,8 +56,14 @@ class Visita {
       notaVozPath: map['notaVozPath'],
       latitud: map['latitud'],
       longitud: map['longitud'],
-      fecha: DateTime.parse(map['fecha']),
+      fecha: map['fecha'],
       hora: map['hora'],
     );
   }
+
+  // Método para convertir el objeto en un JSON
+  String toJson() => json.encode(toMap());
+
+  // Método para crear un objeto desde un JSON
+  factory Visita.fromJson(String source) => Visita.fromMap(json.decode(source));
 }

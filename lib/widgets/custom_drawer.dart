@@ -12,7 +12,7 @@ class CustomDrawer extends StatelessWidget {
               color: Colors.blue,
             ),
             child: Text(
-              'Menú',
+              'MINERD App',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -23,14 +23,68 @@ class CustomDrawer extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('Inicio'),
             onTap: () {
-              Navigator.pushNamed(context, '/home');
+              Navigator.pushReplacementNamed(context, '/home');
             },
           ),
           ListTile(
-            leading: Icon(Icons.add),
+            leading: Icon(Icons.report),
             title: Text('Registrar Incidencia'),
             onTap: () {
               Navigator.pushNamed(context, '/registro-incidencia');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.school),
+            title: Text('Registrar Visita'),
+            onTap: () {
+              Navigator.pushNamed(context, '/registro-visita');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.search),
+            title: Text('Consulta de Escuelas'),
+            onTap: () {
+              Navigator.pushNamed(context, '/consulta-escuela');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.person_search),
+            title: Text('Consulta de Director'),
+            onTap: () {
+              Navigator.pushNamed(context, '/consulta-director');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.list),
+            title: Text('Ver Incidencias'),
+            onTap: () {
+              Navigator.pushNamed(context, '/lista-incidencias');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.list),
+            title: Text('Ver Visitas'),
+            onTap: () {
+              Navigator.pushNamed(context, '/lista-visitas');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text('Configuración'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(Icons.info),
+            title: Text('Acerca de'),
+            onTap: () {
+              Navigator.pushNamed(context, '/acerca-de');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.logout),
+            title: Text('Cerrar Sesión'),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/');
             },
           ),
         ],

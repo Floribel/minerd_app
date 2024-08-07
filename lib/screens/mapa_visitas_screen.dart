@@ -1,8 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import '../providers/visita_provider.dart';
+import '../models/visita_model.dart';
 
-class MapaVisitasScreen extends StatelessWidget {
-  final Set<Marker> _markers = {};
+class MapaVisitasScreen extends StatefulWidget {
+  @override
+  _MapaVisitasScreenState createState() => _MapaVisitasScreenState();
+}
+
+class _MapaVisitasScreenState extends State<MapaVisitasScreen> {
+  GoogleMapController? _mapController;
+  Set<Marker> _markers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVisitas();
+  }
+
+  void _loadVisitas() {
+    final visitas = Provider.of<VisitaProvider>(context, listen: false).visitas;
+    Set<Marker> markers = {};
+
+    for (Visita visita in visitas) {
+      markers.add(
+        Marker(
+          markerId: MarkerId(visita.id.toString()),
+          position: LatLng(visita.latitud, visita.longitud),
+          infoWindow: InfoWindow(
+            title: visita.codigoCentro,
+            snippet: visita.motivo,
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/detalle-visita',
+                arguments: visita,
+              );
+            },
+          ),
+        ),
+      );
+    }
+
+    setState(() {
+      _markers = markers;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,25 +56,14 @@ class MapaVisitasScreen extends StatelessWidget {
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
-          target: LatLng(
-              18.735693, -70.162651), // Coordenadas de la República Dominicana
+          target:
+              LatLng(18.7357, -70.1627), // Coordenadas de República Dominicana
           zoom: 7,
         ),
         markers: _markers,
-      ),
-    );
-  }
-
-  void _cargarMarcadores() {
-    // Aquí agregas los marcadores de las visitas realizadas
-    _markers.add(
-      Marker(
-        markerId: MarkerId('visita_1'),
-        position: LatLng(18.473, -69.912),
-        infoWindow: InfoWindow(
-          title: 'Visita a Escuela Ejemplo',
-          snippet: 'Motivo: Supervisión',
-        ),
+        onMapCreated: (GoogleMapController controller) {
+          _mapController = controller;
+        },
       ),
     );
   }

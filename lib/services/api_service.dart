@@ -1,27 +1,38 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ApiService {
-  Future<List<dynamic>> fetchNoticias() async {
-    final response = await http.get(
-        Uri.parse('https://remolacha.net/wp-json/wp/v2/posts?search=minerd'));
+  final String baseUrl = 'https://adamix.net/minerd/def/';
+
+  Future<Map<String, dynamic>> getData(String endpoint) async {
+    final url = Uri.parse(baseUrl + endpoint);
+    final response = await http.get(url);
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return json.decode(response.body);
     } else {
-      throw Exception('Failed to load noticias');
+      throw Exception('Error al obtener los datos');
     }
   }
 
-  Future<dynamic> fetchClima(double latitud, double longitud) async {
-    final apiKey = 'your_api_key_here'; // Reemplaza con tu clave de API
-    final response = await http.get(Uri.parse(
-        'https://api.weatherapi.com/v1/current.json?key=$apiKey&q=$latitud,$longitud'));
+  Future<Map<String, dynamic>> postData(
+      String endpoint, Map<String, dynamic> data) async {
+    final url = Uri.parse(baseUrl + endpoint);
+    final response = await http.post(url, body: data);
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return json.decode(response.body);
     } else {
-      throw Exception('Failed to load clima');
+      throw Exception('Error al enviar los datos');
+    }
+  }
+
+  Future<void> deleteData(String endpoint) async {
+    final url = Uri.parse(baseUrl + endpoint);
+    final response = await http.post(url);
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al borrar los datos');
     }
   }
 }
