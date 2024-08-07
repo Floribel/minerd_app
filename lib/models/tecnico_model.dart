@@ -1,51 +1,47 @@
 import 'dart:convert';
 
 class Tecnico {
-  int? id;
+  String cedula;
   String nombre;
   String apellido;
-  String matricula;
-  String reflexion;
-  String username;
-  String password;
-  String fotoPath;
+  String clave;
+  String correo;
+  String telefono;
+  String fechaNacimiento;
 
   Tecnico({
-    this.id,
+    required this.cedula,
     required this.nombre,
     required this.apellido,
-    required this.matricula,
-    required this.reflexion,
-    required this.username,
-    required this.password,
-    required this.fotoPath,
+    required this.clave,
+    required this.correo,
+    required this.telefono,
+    required this.fechaNacimiento,
   });
 
   // Convierte el modelo a un Map para la base de datos
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'cedula': cedula,
       'nombre': nombre,
       'apellido': apellido,
-      'matricula': matricula,
-      'reflexion': reflexion,
-      'username': username,
-      'password': password,
-      'fotoPath': fotoPath,
+      'clave': clave,
+      'correo': correo,
+      'telefono': telefono,
+      'fecha_nacimiento': fechaNacimiento,
     };
   }
 
   // Convierte un Map en un objeto Tecnico
   factory Tecnico.fromMap(Map<String, dynamic> map) {
     return Tecnico(
-      id: map['id'],
-      nombre: map['nombre'],
-      apellido: map['apellido'],
-      matricula: map['matricula'],
-      reflexion: map['reflexion'],
-      username: map['username'],
-      password: map['password'],
-      fotoPath: map['fotoPath'],
+      cedula: map['cedula'] ?? '',
+      nombre: map['nombre'] ?? '',
+      apellido: map['apellido'] ?? '',
+      clave: map['clave'] ?? '',
+      correo: map['correo'] ?? '',
+      telefono: map['telefono'] ?? '',
+      fechaNacimiento: map['fecha_nacimiento'] ?? '',
     );
   }
 

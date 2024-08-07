@@ -40,6 +40,7 @@ dependencies:
   # Multimedia handling
   image_picker: ^0.8.4+1
   flutter_sound: ^9.1.5
+  file_picker: ^5.2.0
 
   # Secure Storage
   flutter_secure_storage: ^5.0.2
@@ -69,6 +70,7 @@ flutter:
     - assets/images/background.png
     - assets/images/logo.png
     - assets/images/sample_school.png
+    - assets/images/profile_placeholder.png
     - assets/images/map_marker.png
     - assets/audio/sample_audio.mp3
 

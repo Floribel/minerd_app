@@ -8,18 +8,14 @@ class TecnicoProvider with ChangeNotifier {
 
   Tecnico? get loggedInTecnico => _loggedInTecnico;
 
-  Future<bool> loginTecnico(String username, String password) async {
-    final url = Uri.parse('https://adamix.net/minerd/def/iniciar_sesion.php');
-    final response = await http.post(url, body: {
-      'username': username,
-      'password': password,
-    });
+  Future<bool> registerTecnico(Tecnico tecnico) async {
+    final url = Uri.parse('https://adamix.net/minerd/def/registro.php');
+    final response = await http.post(url, body: tecnico.toMap());
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      if (data['success'] == true) {
-        // Asegúrate de que la respuesta de la API tenga un campo que indique éxito
-        _loggedInTecnico = Tecnico.fromMap(data['data']);
+      if (data['exito'] == true) {
+        _loggedInTecnico = tecnico;
         notifyListeners();
         return true;
       } else {
@@ -30,14 +26,20 @@ class TecnicoProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> registerTecnico(Tecnico tecnico) async {
-    final url = Uri.parse('https://adamix.net/minerd/def/registro.php');
-    final response = await http.post(url, body: tecnico.toMap());
+  Future<bool> loginTecnico(String cedula, String clave) async {
+    final url = Uri.parse('https://adamix.net/minerd/def/iniciar_sesion.php');
+    final response = await http.post(url, body: {
+      'cedula': cedula,
+      'clave': clave,
+    });
+
+    print('Respuesta de la API: ${response.body}');
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      if (data['success'] == true) {
-        _loggedInTecnico = tecnico;
+
+      if (data['exito'] == true) {
+        _loggedInTecnico = Tecnico.fromMap(data['datos']);
         notifyListeners();
         return true;
       } else {

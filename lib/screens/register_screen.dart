@@ -4,12 +4,13 @@ import '../providers/tecnico_provider.dart';
 import '../models/tecnico_model.dart';
 
 class RegisterScreen extends StatelessWidget {
+  final _cedulaController = TextEditingController();
   final _nombreController = TextEditingController();
   final _apellidoController = TextEditingController();
-  final _matriculaController = TextEditingController();
-  final _reflexionController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _claveController = TextEditingController();
+  final _correoController = TextEditingController();
+  final _telefonoController = TextEditingController();
+  final _fechaNacimientoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,10 @@ class RegisterScreen extends StatelessWidget {
         child: Column(
           children: [
             TextField(
+              controller: _cedulaController,
+              decoration: const InputDecoration(labelText: 'Cédula'),
+            ),
+            TextField(
               controller: _nombreController,
               decoration: const InputDecoration(labelText: 'Nombre'),
             ),
@@ -30,21 +35,22 @@ class RegisterScreen extends StatelessWidget {
               decoration: const InputDecoration(labelText: 'Apellido'),
             ),
             TextField(
-              controller: _matriculaController,
-              decoration: const InputDecoration(labelText: 'Matrícula'),
-            ),
-            TextField(
-              controller: _reflexionController,
-              decoration: const InputDecoration(labelText: 'Reflexión'),
-            ),
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Usuario'),
-            ),
-            TextField(
-              controller: _passwordController,
+              controller: _claveController,
               decoration: const InputDecoration(labelText: 'Contraseña'),
               obscureText: true,
+            ),
+            TextField(
+              controller: _correoController,
+              decoration: const InputDecoration(labelText: 'Correo'),
+            ),
+            TextField(
+              controller: _telefonoController,
+              decoration: const InputDecoration(labelText: 'Teléfono'),
+            ),
+            TextField(
+              controller: _fechaNacimientoController,
+              decoration:
+                  const InputDecoration(labelText: 'Fecha de Nacimiento'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -52,27 +58,32 @@ class RegisterScreen extends StatelessWidget {
                 final tecnicoProvider =
                     Provider.of<TecnicoProvider>(context, listen: false);
 
-                // Define un path de foto predeterminado
-                const String fotoPath = 'assets/images/profile_photo.png';
-
                 // Crea un objeto Técnico con los datos ingresados
                 final nuevoTecnico = Tecnico(
+                  cedula: _cedulaController.text,
                   nombre: _nombreController.text,
                   apellido: _apellidoController.text,
-                  matricula: _matriculaController.text,
-                  reflexion: _reflexionController.text,
-                  username: _usernameController.text,
-                  password: _passwordController.text,
-                  fotoPath: fotoPath,
+                  clave: _claveController.text,
+                  correo: _correoController.text,
+                  telefono: _telefonoController.text,
+                  fechaNacimiento: _fechaNacimientoController.text,
                 );
 
-                await tecnicoProvider.registerTecnico(nuevoTecnico);
+                bool registrado =
+                    await tecnicoProvider.registerTecnico(nuevoTecnico);
 
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Técnico registrado exitosamente'),
-                ));
+                if (registrado) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Técnico registrado exitosamente'),
+                  ));
 
-                Navigator.pop(context);
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        'Error en el registro. Por favor, revisa los campos.'),
+                  ));
+                }
               },
               child: const Text('Registrarse'),
             ),

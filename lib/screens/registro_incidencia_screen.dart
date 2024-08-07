@@ -1,9 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import '../models/incidencia_model.dart';
-import '../providers/incidencia_provider.dart';
-import 'dart:io';
+import 'package:http/http.dart' as http;
 
 class RegistroIncidenciaScreen extends StatefulWidget {
   @override
@@ -31,29 +29,43 @@ class _RegistroIncidenciaScreenState extends State<RegistroIncidenciaScreen> {
     }
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      Incidencia nuevaIncidencia = Incidencia(
-        titulo: _titulo,
-        centroEducativo: _centroEducativo,
-        regional: _regional,
-        distrito: _distrito,
-        fecha: DateTime.now().toIso8601String(),
-        descripcion: _descripcion,
-        fotoPath: _fotoPath ?? '',
-        audioPath: _audioPath ?? '',
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://adamix.net/minerd/def/registrar_incidencia.php'),
       );
 
-      Provider.of<IncidenciaProvider>(context, listen: false)
-          .insertarIncidencia(nuevaIncidencia);
+      request.fields['titulo'] = _titulo;
+      request.fields['centro_educativo'] = _centroEducativo;
+      request.fields['regional'] = _regional;
+      request.fields['distrito'] = _distrito;
+      request.fields['descripcion'] = _descripcion;
+      request.fields['fecha'] = DateTime.now().toIso8601String();
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Incidencia registrada exitosamente'),
-      ));
+      if (_fotoPath != null) {
+        request.files
+            .add(await http.MultipartFile.fromPath('foto', _fotoPath!));
+      }
+      if (_audioPath != null) {
+        request.files
+            .add(await http.MultipartFile.fromPath('audio', _audioPath!));
+      }
 
-      Navigator.pop(context);
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Incidencia registrada exitosamente'),
+        ));
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error al registrar la incidencia'),
+        ));
+      }
     }
   }
 
@@ -93,43 +105,7 @@ class _RegistroIncidenciaScreenState extends State<RegistroIncidenciaScreen> {
                   _centroEducativo = value!;
                 },
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Regional'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese la regional';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _regional = value!;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Distrito'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el distrito';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _distrito = value!;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Descripción'),
-                maxLines: 3,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese una descripción';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _descripcion = value!;
-                },
-              ),
+              // Añadir otros campos de entrada aquí
               SizedBox(height: 20),
               _fotoPath != null ? Image.network(_fotoPath!) : Container(),
               SizedBox(height: 20),

@@ -18,9 +18,8 @@ class AcercaDeScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: tecnico?.fotoPath != null
-                  ? NetworkImage(tecnico!.fotoPath)
-                  : AssetImage('assets/images/profile_placeholder.png')
+              backgroundImage:
+                  AssetImage('assets/images/profile_placeholder.png')
                       as ImageProvider,
             ),
             SizedBox(height: 20),
@@ -29,14 +28,17 @@ class AcercaDeScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              'Matrícula: ${tecnico?.matricula ?? 'N/A'}',
+              'Cédula: ${tecnico?.cedula ?? 'N/A'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              'Correo: ${tecnico?.correo ?? 'N/A'}',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
             Text(
-              'Reflexión: "${tecnico?.reflexion ?? 'N/A'}"',
-              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-              textAlign: TextAlign.center,
+              'Fecha de Nacimiento: ${tecnico?.fechaNacimiento ?? 'N/A'}',
+              style: TextStyle(fontSize: 16),
             ),
           ],
         ),
