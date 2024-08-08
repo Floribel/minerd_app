@@ -69,9 +69,39 @@ class CustomDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: Icon(Icons.map),
+            title: Text('Mapa de Visitas'),
+            onTap: () {
+              Navigator.pushNamed(context, '/mapa-visitas');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.newspaper),
+            title: Text('Noticias'),
+            onTap: () {
+              Navigator.pushNamed(context, '/noticias');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.wb_sunny),
+            title: Text('Estado del Clima'),
+            onTap: () {
+              Navigator.pushNamed(context, '/estado-clima');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.star),
+            title: Text('Horóscopo'),
+            onTap: () {
+              Navigator.pushNamed(context, '/horoscopo');
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.settings),
             title: Text('Configuración'),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/configuracion');
+            },
           ),
           ListTile(
             leading: Icon(Icons.info),

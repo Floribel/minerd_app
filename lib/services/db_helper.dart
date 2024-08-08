@@ -13,15 +13,14 @@ class DBHelper {
   }
 
   Future<Database> _initDB() async {
-    String path = join(await getDatabasesPath(), 'minerd.db');
     return await openDatabase(
-      path,
+      inMemoryDatabasePath, // Base de datos en memoria
       version: 1,
-      onCreate: (db, version) {
-        db.execute(
+      onCreate: (db, version) async {
+        await db.execute(
           'CREATE TABLE incidencias(id INTEGER PRIMARY KEY, titulo TEXT, centroEducativo TEXT, regional TEXT, distrito TEXT, fecha TEXT, descripcion TEXT, fotoPath TEXT, audioPath TEXT)',
         );
-        db.execute(
+        await db.execute(
           'CREATE TABLE visitas(id INTEGER PRIMARY KEY, cedulaDirector TEXT, codigoCentro TEXT, motivo TEXT, fotoEvidenciaPath TEXT, comentario TEXT, notaVozPath TEXT, latitud REAL, longitud REAL, fecha TEXT, hora TEXT)',
         );
       },

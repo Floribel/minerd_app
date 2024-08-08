@@ -35,4 +35,23 @@ class ApiService {
       throw Exception('Error al borrar los datos');
     }
   }
+
+  Future<String?> uploadImage(String imagePath) async {
+    final url = Uri.parse('${baseUrl}upload_image.php');
+    final request = http.MultipartRequest('POST', url);
+    request.files.add(await http.MultipartFile.fromPath('image', imagePath));
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      final responseBody = await response.stream.bytesToString();
+      final decodedResponse = json.decode(responseBody);
+      if (decodedResponse['exito'] == true) {
+        return decodedResponse['url'];
+      }
+    } else {
+      throw Exception('Error al subir la imagen');
+    }
+    return null;
+  }
 }

@@ -55,6 +55,34 @@ class HomeScreen extends StatelessWidget {
             ),
             ElevatedButton.icon(
               onPressed: () {
+                Navigator.pushNamed(context, '/mapa-visitas');
+              },
+              icon: Icon(Icons.map),
+              label: Text('Mapa de Visitas'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/noticias');
+              },
+              icon: Icon(Icons.newspaper),
+              label: Text('Ver Noticias'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/estado-clima');
+              },
+              icon: Icon(Icons.wb_sunny),
+              label: Text('Estado del Clima'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/horoscopo');
+              },
+              icon: Icon(Icons.star),
+              label: Text('Horóscopo'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
                 _showDeleteConfirmationDialog(
                     context, incidenciaProvider, visitaProvider);
               },

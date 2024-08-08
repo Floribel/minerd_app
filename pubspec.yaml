@@ -70,7 +70,6 @@ flutter:
     - assets/images/background.png
     - assets/images/logo.png
     - assets/images/sample_school.png
-    - assets/images/profile_placeholder.png
     - assets/images/map_marker.png
     - assets/audio/sample_audio.mp3
 

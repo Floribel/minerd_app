@@ -22,8 +22,7 @@ class DetalleVisitaScreen extends StatelessWidget {
             Text('Motivo: ${visita.motivo}'),
             Text('Comentario: ${visita.comentario}'),
             Text(
-              'Fecha: ${DateTime.parse(visita.fecha).toLocal().toString().split(' ')[0]}',
-            ),
+                'Fecha: ${DateTime.parse(visita.fecha).toLocal().toString().split(' ')[0]}'),
             Text('Hora: ${visita.hora}'),
             // Verificación de nullidad y de que no esté vacío antes de mostrar la imagen
             visita.fotoEvidenciaPath != null &&
